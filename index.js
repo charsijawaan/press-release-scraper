@@ -23,12 +23,12 @@ app.get('/start987654321', async function (req, res) {
   res.send('Program Started..')
   setInterval(() => {
     fetchAll()
-  }, 70000)    
+  }, 300000)    
 })
 
 
 
-app.get('/home', async function (req, res) {
+app.get('/', async function (req, res) {
   
   let data = await dbHelper.getAllHits()
   
