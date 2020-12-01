@@ -21,9 +21,9 @@ async function fetchAll() {
 
 app.get('/start987654321', async function (req, res) {
   res.send('Program Started..')
-  setInterval(() => {
+  // setInterval(() => {
     fetchAll()
-  }, 300000)    
+  // }, 60000)    
 })
 
 

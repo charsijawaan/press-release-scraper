@@ -14,7 +14,10 @@ module.exports.fetchAccessWire = async () => {
           let url = articles[i].releaseurl
           let title = articles[i].title
           let id = articles[i].id
-          let date = articles[i].dateString
+          let date = articles[i].adate
+
+          date = date.replace('T', ' ')
+          date = date.replace('Z', '')
   
           let result = await dbHelper.accessWireArticlesExists(id)
   
@@ -31,11 +34,11 @@ module.exports.fetchAccessWire = async () => {
         
               if(articleHeading.includes('nasdaq')) {
                 let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nasdaq')
-                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nasdaq')
+                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, date, stockName, 'nasdaq')
             }
             else if(articleHeading.includes('nyse')) {
                 let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nyse')
-                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nyse')
+                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, date, stockName, 'nyse')
             }
               await dbHelper.insertIntoAccessWire(articles[i])              
           }                              
