@@ -22,15 +22,21 @@ module.exports.fetchAccessWire = async () => {
               let pageResponse = await axios.get(url)
               let articleHeading = $('#articleHeading', pageResponse.data).text()
               let articleBody = $('#articleBody', pageResponse.data).text()
-              
-              if(articleHeading.includes('NASDAQ') || articleHeading.includes('nasdaq')
-                  || articleHeading.includes('NYSE') || articleHeading.includes('nyse')
-                    || articleBody.includes('NASDAQ') || articleBody.includes('nasdaq')
-                      || articleBody.includes('NYSE') || articleBody.includes('nyse')) {
-                        // Go to WSJ
-                        console.log('WSJ HIT!!!')
-  
-              }
+                            
+              articleHeading = articleHeading.toLowerCase()
+              articleHeading = articleHeading.replace(/\r?\n|\r/g, '')
+
+              articleBody = articleBody.toLowerCase()
+              articleBody = articleBody.replace(/\r?\n|\r/g, '')
+        
+              if(articleHeading.includes('nasdaq')) {
+                let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nasdaq')
+                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nasdaq')
+            }
+            else if(articleHeading.includes('nyse')) {
+                let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nyse')
+                await dbHelper.insertIntoHits(`http://www.globenewswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nyse')
+            }
               await dbHelper.insertIntoAccessWire(articles[i])              
           }                              
       }

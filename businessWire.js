@@ -25,14 +25,21 @@ module.exports.fetchBusinessWire = async () => {
         let articleHeading = $('.bw-release-main header', pageResponse.data).text().trim()
         let articleBody = $('.bw-release-body', pageResponse.data).text()
         
-        if(articleHeading.includes('NASDAQ') || articleHeading.includes('nasdaq')
-                  || articleHeading.includes('NYSE') || articleHeading.includes('nyse')
-                    || articleBody.includes('NASDAQ') || articleBody.includes('nasdaq')
-                      || articleBody.includes('NYSE') || articleBody.includes('nyse')) {
-                        console.log('WSJ HIT!!!')
+        
+        articleHeading = articleHeading.toLowerCase()
+        articleHeading = articleHeading.replace(/\r?\n|\r/g, '')
+
+        articleBody = articleBody.toLowerCase()
+        articleBody = articleBody.replace(/\r?\n|\r/g, '')
   
+        if(articleHeading.includes('nasdaq') || articleBody.includes('nasdaq')) {
+          let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nasdaq')
+          await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nasdaq')
         }
-  
+        else if(articleHeading.includes('nyse') || articleBody.includes('nyse')) {
+          let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nyse')
+          await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, "2020", stockName, 'nyse')
+        }
         await dbHelper.insertIntoBusinessWire(urlList[i])
       }
   

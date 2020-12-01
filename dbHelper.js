@@ -95,6 +95,18 @@ module.exports = {
                     resolve(rows)
             })
         })
+    },
+
+    insertIntoHits: (url, heading, body, date, stockName, marketName) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = 'INSERT INTO hits (url, heading, body, date , stock_name, market_name) VALUES(?,?,?,?,?,?)'
+            conn.query(sqlQuery, [url, heading, body, date, stockName, marketName], (err, rows, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(rows)
+            })
+        })
     }
 
 }

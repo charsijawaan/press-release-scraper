@@ -12,3 +12,18 @@ module.exports.getUnique = (array) => {
     }
     return uniqueArray
 }
+
+module.exports.extractStockCompanyName = (heading, body, marketName) => {
+    let res = body.split(marketName)
+    if(res[1][0] === ':') {
+        let closeBracketIndex = res[1].indexOf(')')
+        let stockName = res[1].substring(0, closeBracketIndex);
+        stockName = stockName.replace(' ', '')
+        stockName = stockName.replace(':', '')
+        return stockName
+    }
+    else {
+        console.log('Cannot get Company Name')
+        return "error"
+    }
+}
