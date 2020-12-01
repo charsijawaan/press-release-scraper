@@ -26,6 +26,8 @@ app.get('/start987654321', async function (req, res) {
   }, 70000)    
 })
 
+
+
 app.get('/home', async function (req, res) {
   
   let data = await dbHelper.getAllHits()
@@ -35,4 +37,5 @@ app.get('/home', async function (req, res) {
   })
 })
 
-app.listen(3000)
+const port = process.env.PORT || 3000;
+app.listen(port)
