@@ -5,7 +5,9 @@ const helpers = require('./helpers')
 
 module.exports.fetchBusinessWire = async () => {
     console.log('Fetching from Business Wire...')
-    let response = await axios.get('https://www.businesswire.com/portal/site/home/news/')
+
+    try {
+      let response = await axios.get('https://www.businesswire.com/portal/site/home/news/')
     let urlList = []
   
     let mainContainer = $('.bwNewsList', response.data)
@@ -45,4 +47,8 @@ module.exports.fetchBusinessWire = async () => {
   
     }
     console.log('Business Wire Sync complete...') 
-  }
+    }
+    catch(error) {
+      return
+    }    
+}

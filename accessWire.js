@@ -5,9 +5,9 @@ const helpers = require('./helpers')
 
 module.exports.fetchAccessWire = async () => {
     console.log('Fetching from access wire...')
-    
-    let response = await axios.get('https://www.accesswire.com/users/api/newsroom')
-    let articles = response.data.data.articles
+    try {
+        let response = await axios.get('https://www.accesswire.com/users/api/newsroom')
+        let articles = response.data.data.articles
   
       for(let i = 0; i < articles.length; i++) {
   
@@ -42,4 +42,8 @@ module.exports.fetchAccessWire = async () => {
       }
   
       console.log('Access Wire Sync complete...') 
-  }
+    }
+    catch(error) {
+        return
+    }    
+}

@@ -8,10 +8,10 @@ const prNewsWire = require('./prNewsWire')
 run = async () => {
   while(true) {         
   
-    // accessWire.fetchAccessWire()
-    // globalNewsWire.fetchGlobalNewsWire()
+    accessWire.fetchAccessWire()
+    globalNewsWire.fetchGlobalNewsWire()
     prNewsWire.fetchPrNewsWire()
-    // businessWire.fetchBusinessWire()
+    businessWire.fetchBusinessWire()
 
     // Now Snooze the server
     snoozeTime = Math.random() * (200000 - 30000) + 30000
