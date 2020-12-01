@@ -4,20 +4,35 @@ const accessWire = require('./accessWire')
 const globalNewsWire = require('./globalNewsWire')
 const prNewsWire = require('./prNewsWire')
 
-// Run 24/7
-run = async () => {
-  while(true) {         
-  
-    accessWire.fetchAccessWire()
-    globalNewsWire.fetchGlobalNewsWire()
-    prNewsWire.fetchPrNewsWire()
-    businessWire.fetchBusinessWire()
+const express = require('express')
+const app = express()
+let hbs = require('hbs')
+const dbHelper = require('./dbHelper')
 
-    // Now Snooze the server
-    snoozeTime = Math.random() * (200000 - 30000) + 30000
-    console.log('Now Snoozing for ' + (snoozeTime/1000) + ' seconds...')
-    await helpers.snooze(snoozeTime)
-  }  
+hbs.registerPartials(__dirname + '/views/partials')
+app.set('view engine', 'hbs')
+
+async function fetchAll() {
+  accessWire.fetchAccessWire()
+  globalNewsWire.fetchGlobalNewsWire()
+  prNewsWire.fetchPrNewsWire()
+  businessWire.fetchBusinessWire()
 }
 
-run()
+app.get('/start987654321', async function (req, res) {
+  res.send('Program Started..')
+  setInterval(() => {
+    fetchAll()
+  }, 70000)    
+})
+
+app.get('/home', async function (req, res) {
+  
+  let data = await dbHelper.getAllHits()
+  
+  res.render('home', {
+    data: data
+  })
+})
+
+app.listen(3000)

@@ -107,6 +107,18 @@ module.exports = {
                     resolve(rows)
             })
         })
+    },
+
+    getAllHits: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = 'SELECT * FROM hits'
+            conn.query(sqlQuery, [], (err, rows, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(rows)
+            })
+        })
     }
 
 }

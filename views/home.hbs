@@ -1,0 +1,31 @@
+<html>
+    <head></head>
+    <body>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>URL</th>
+                <th>Heading</th>
+                <th>Body</th>
+                <th>Date</th>
+                <th>Stock Name</th>
+                <th>Market Name</th>
+            </tr>
+            
+            {{#if data}}
+                {{#each data}}
+                <tr>
+                    <td>{{this.id}}</td>
+                    <td>{{this.url}}</td>
+                    <td>{{this.heading}}</td>
+                    <td>{{this.body}}</td>
+                    <td>{{this.date}}</td>
+                    <td>{{this.stock_name}}</td>
+                    <td>{{this.market_name}}</td>
+                </tr>
+            {{/each}}                        
+            {{/if}}            
+            
+            </table>        
+    </body>
+</html>
