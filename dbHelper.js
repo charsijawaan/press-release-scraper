@@ -119,6 +119,18 @@ module.exports = {
                     resolve(rows)
             })
         })
+    },
+
+    insertIntoWSJ: (id, ticker, publicFloat, marketCap, volume, changeFromLast) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = 'INSERT INTO wsj (id, ticker, public_float, market_cap, volume, change_from_last) VALUES(?,?,?,?,?,?)'
+            conn.query(sqlQuery, [id, ticker, publicFloat, marketCap, volume, changeFromLast], (err, rows, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(rows)
+            })
+        })
     }
 
 }

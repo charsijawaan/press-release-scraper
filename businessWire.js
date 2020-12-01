@@ -42,11 +42,17 @@ module.exports.fetchBusinessWire = async () => {
   
                 if(articleHeading.includes('nasdaq') || articleBody.includes('nasdaq')) {
                     let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nasdaq')
-                    await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, timeList[i], stockName, 'nasdaq')
+                    let row = await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, timeList[i], stockName, 'nasdaq')
+                    if(stockName != 'error') {
+                        await helpers.crawlWSJ(row.insertId, stockName)
+                    }
                 }
                 else if(articleHeading.includes('nyse') || articleBody.includes('nyse')) {
                     let stockName = helpers.extractStockCompanyName(articleHeading, articleBody, 'nyse')
-                    await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, timeList[i], stockName, 'nyse')
+                    let row = await dbHelper.insertIntoHits(`https://www.businesswire.com/` + urlList[i], articleHeading, articleBody, timeList[i], stockName, 'nyse')
+                    if(stockName != 'error') {
+                        await helpers.crawlWSJ(row.insertId, stockName)
+                    }
                 }
                 await dbHelper.insertIntoBusinessWire(urlList[i])
             }

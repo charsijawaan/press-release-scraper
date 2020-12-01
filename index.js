@@ -3,7 +3,6 @@ const businessWire = require('./businessWire')
 const accessWire = require('./accessWire')
 const globalNewsWire = require('./globalNewsWire')
 const prNewsWire = require('./prNewsWire')
-
 const express = require('express')
 const app = express()
 let hbs = require('hbs')
@@ -13,9 +12,9 @@ hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs')
 
 async function fetchAll() {
-  accessWire.fetchAccessWire()
-  globalNewsWire.fetchGlobalNewsWire()
-  prNewsWire.fetchPrNewsWire()
+  //accessWire.fetchAccessWire()
+  //globalNewsWire.fetchGlobalNewsWire()
+  //prNewsWire.fetchPrNewsWire()
   businessWire.fetchBusinessWire()
 }
 
