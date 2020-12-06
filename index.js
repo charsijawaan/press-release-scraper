@@ -34,5 +34,9 @@ app.get('/', async function (req, res) {
   })
 })
 
+app.get('/stay_awake',(req,res) => {
+  return res.send('Hello');
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port)
