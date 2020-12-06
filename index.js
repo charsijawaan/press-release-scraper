@@ -12,20 +12,18 @@ hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs')
 
 async function fetchAll() {
-  //accessWire.fetchAccessWire()
-  //globalNewsWire.fetchGlobalNewsWire()
-  //prNewsWire.fetchPrNewsWire()
-  businessWire.fetchBusinessWire()
+  await accessWire.fetchAccessWire()
+  await globalNewsWire.fetchGlobalNewsWire()
+  await prNewsWire.fetchPrNewsWire()
+  await businessWire.fetchBusinessWire()
 }
 
 app.get('/start987654321', async function (req, res) {
   res.send('Program Started..')
-  // setInterval(() => {
-    fetchAll()
-  // }, 60000)    
+  setInterval(async () => {
+    await fetchAll()
+  }, 900000)
 })
-
-
 
 app.get('/', async function (req, res) {
   
