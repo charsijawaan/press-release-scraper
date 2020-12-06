@@ -108,7 +108,7 @@ parsePublicFloat = (str) => {
 
 
 module.exports.crawlWSJ = async (id, ticker) => {
-    const browser = await puppeteer.launch({headless: true});
+    const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     try {
         await page.goto(`https://www.wsj.com/market-data/quotes/${ticker}`, { waitUntil: 'networkidle2' })
