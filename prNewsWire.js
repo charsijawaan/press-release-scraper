@@ -1,9 +1,10 @@
 const axios = require('axios')
-const dbHelper = require('./dbHelper')
 const $ = require('cheerio')
 const helpers = require('./helpers')
+const dbHelper = require('./dbHelper')
 
 module.exports.fetchPrNewsWire = async () => {
+
     console.log('Fetching from Pr News Wire...')
 
     try {
@@ -22,12 +23,13 @@ module.exports.fetchPrNewsWire = async () => {
 
                 let result = await dbHelper.prNewsWireArticlesExists('https://www.prnewswire.com' + urlList[i])
 
-                if(result.length == 0) {
+                if(result.length === 0) {
 
                     try {
                         let pageResponse = await axios.get(`https://www.prnewswire.com/` + urlList[i])
                         let articleHeading = $('.release-header .row:first-child', pageResponse.data).text()
                         let articleBody = $('.release-body', pageResponse.data).text()
+                        let articleDate = helpers.convertTime($('.mb-no', pageResponse.data).text())
 
                         articleHeading = articleHeading.toLowerCase()
                         articleBody = articleBody.toLowerCase()
@@ -37,8 +39,8 @@ module.exports.fetchPrNewsWire = async () => {
                             if(symbolsArray.length === 0) {
                                 symbolsArray.push('null')
                             }
-                            let row = await dbHelper.insertIntoHits(`https://www.prnewswire.com` + urlList[i], articleHeading, articleBody, "2020", symbolsArray[0], 'nasdaq')
-                            if(symbolsArray[0] != 'null')
+                            let row = await dbHelper.insertIntoHits(`https://www.prnewswire.com` + urlList[i], articleHeading, articleBody, articleDate, symbolsArray[0], 'nasdaq')
+                            if(symbolsArray[0] !== 'null')
                                 await helpers.crawlWSJ(row.insertId, symbolsArray[0])
                         }
                         else if(articleHeading.includes('nyse') || articleBody.includes('nyse')) {
@@ -46,8 +48,8 @@ module.exports.fetchPrNewsWire = async () => {
                             if(symbolsArray.length === 0) {
                                 symbolsArray.push('null')
                             }
-                            let row = await dbHelper.insertIntoHits(`https://www.prnewswire.com` + urlList[i], articleHeading, articleBody, "2020", symbolsArray[0], 'nyse')
-                            if(symbolsArray[0] != 'null')
+                            let row = await dbHelper.insertIntoHits(`https://www.prnewswire.com` + urlList[i], articleHeading, articleBody, articleDate, symbolsArray[0], 'nyse')
+                            if(symbolsArray[0] !== 'null')
                                 await helpers.crawlWSJ(row.insertId, symbolsArray[0])
                         }
                     }
@@ -64,7 +66,7 @@ module.exports.fetchPrNewsWire = async () => {
 
       console.log('Pr News Wire Sync complete...')
     }
-    catch(error) {
-      return
+    catch(ex) {
+      console.log(ex)
     } 
 }

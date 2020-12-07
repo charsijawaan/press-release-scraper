@@ -96,7 +96,7 @@ parsePublicFloat = (str) => {
     let numericPart = ''
     let unitPart = ''
     for(let i = 0; i < str.length; i++) {
-        if(str[i] === '.' || isDigit(str[i])) {
+        if(str[i] === '-' || str[i] === '+' || str[i] === '.' || isDigit(str[i])) {
             numericPart += str[i]
         }
         else {
@@ -115,6 +115,41 @@ parse52WeekRange = (str) => {
     return res
 }
 
+getMonth = (str) => {
+    if(str === 'jan') {
+        return '01'
+    } else if(str === 'feb') {
+        return '02'
+    } else if(str === 'mar') {
+        return '03'
+    } else if(str === 'apr') {
+        return '04'
+    } else if(str === 'may') {
+        return '05'
+    } else if(str === 'jun') {
+        return '06'
+    } else if(str === 'jul') {
+        return '07'
+    } else if(str === 'aug') {
+        return '08'
+    } else if(str === 'sep') {
+        return '09'
+    } else if(str === 'oct') {
+        return '10'
+    } else if(str === 'nov') {
+        return '11'
+    } else if(str === 'dec') {
+        return '12'
+    }
+}
+
+module.exports.convertTime = (time) => {
+    time = time.replace(/,/g, "")
+    time = time.split(" ")
+    let month = getMonth(time[0].toLowerCase())
+    return `${time[2]}-${month}-${time[1]} ${time[3]}`
+}
+
 
 module.exports.crawlWSJ = async (id, ticker) => {
     const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
@@ -123,43 +158,103 @@ module.exports.crawlWSJ = async (id, ticker) => {
         await page.goto(`https://www.wsj.com/market-data/quotes/${ticker}`, { waitUntil: 'networkidle2' })
 
         try {
-            const _1 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[5]/div/span'))[0];
-            const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0];
-            const _3 = (await page.$x('//*[@id="quote_volume"]'))[0];
-            const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0];
-            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[3]/li[4]/div/span[2]'))[0];
+            const _1 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[5]/div/span'))[0]
+            const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0]
+            const _3 = (await page.$x('//*[@id="quote_volume"]'))[0]
+            const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0]
+            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[3]/li[4]/div/span[2]'))[0]
+
+            // At Close
+            const _6 = (await page.$x('//*[@id="quote_val"]'))[0]
+
+            // After Hours
+            const _7 = (await page.$x('//*[@id="ms_quote_val"]'))[0]
 
             try {
-                let publicFloat = await page.evaluate(el => {
-                    return el.textContent;
-                }, _1)
 
-                let marketCap = await page.evaluate(el => {
-                    return el.textContent;
-                }, _2)
+                let publicFloat
+                let parsedPublicFloat
+                try {
+                    publicFloat = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _1)
+                    parsedPublicFloat = parsePublicFloat(publicFloat)
+                }
+                catch (ex) {
+                    parsedPublicFloat = [0, 0]
+                }
 
-                let volume = await page.evaluate(el => {
-                    return el.textContent;
-                }, _3)
+                let marketCap
+                let parsedMarketCap
+                try {
+                    marketCap = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _2)
+                    parsedMarketCap = parsePublicFloat(marketCap)
+                }
+                catch (ex) {
+                    parsedMarketCap = [0, 0]
+                }
 
-                let change = await page.evaluate(el => {
-                    return el.textContent;
-                }, _4)
+                let volume
+                try {
+                    volume = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _3)
+                    volume = parseFloat(volume.replace(/\D/g,''))
+                }
+                catch (ex) {
+                    volume = 0
+                }
 
-                let _52WeekRange = await page.evaluate(el => {
-                    return el.textContent;
-                }, _5)
+                let change
+                let parsedChange
+                try {
+                    change = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _4)
+                    parsedChange = parsePublicFloat(change)
+                }
+                catch (ex) {
+                    parsedChange = [0, 0]
+                }
 
+                let _52WeekRange
+                let parsed52WeekRange
+                try {
+                    _52WeekRange = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _5)
+                    parsed52WeekRange = parse52WeekRange(_52WeekRange)
+                }
+                catch (ex) {
+                    parsed52WeekRange = [0, 0]
+                }
 
-                let parsedPublicFloat = parsePublicFloat(publicFloat)
-                let parsedMarketCap = parsePublicFloat(marketCap)
-                volume = parseFloat(volume.replace(/\D/g,''))
-                let parsedChange = parsePublicFloat(change)
-                let parsed52WeekRange = parse52WeekRange(_52WeekRange)
+                let stockPriceAtClose
+                try {
+                    stockPriceAtClose = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _6)
+                }
+                catch (ex) {
+                    stockPriceAtClose = 0
+                }
+
+                let stockPriceAfterHours
+                try {
+                    stockPriceAfterHours = await page.evaluate(el => {
+                        return el.textContent;
+                    }, _7)
+                }
+                catch (ex) {
+                    stockPriceAfterHours = 0
+                }
 
                 await dbHelper.insertIntoWSJ(id, ticker, parseFloat(parsedPublicFloat[0]),
                     parsedPublicFloat[1], parseFloat(parsedMarketCap[0]), parsedMarketCap[1],
-                    volume, parseFloat(parsedChange[0]), parsedChange[1], parsed52WeekRange[0], parsed52WeekRange[1])
+                    volume, parseFloat(parsedChange[0]), parsedChange[1], parsed52WeekRange[0],
+                    parsed52WeekRange[1], parseFloat(stockPriceAtClose), parseFloat(stockPriceAfterHours))
 
                 await browser.close()
             }

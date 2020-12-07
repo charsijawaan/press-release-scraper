@@ -12,18 +12,11 @@ hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs')
 
 async function fetchAll() {
-  await accessWire.fetchAccessWire()
-  await globalNewsWire.fetchGlobalNewsWire()
-  await prNewsWire.fetchPrNewsWire()
-  await businessWire.fetchBusinessWire()
+  //await businessWire.fetchBusinessWire()
+  // await accessWire.fetchAccessWire()
+  // await globalNewsWire.fetchGlobalNewsWire()
+   await prNewsWire.fetchPrNewsWire()
 }
-
-app.get('/start987654321', async function (req, res) {
-  res.send('Program Started..')
-  // setInterval(async () => {
-    await fetchAll()
-  // }, 900000)
-})
 
 app.get('/', async function (req, res) {
   
@@ -32,6 +25,7 @@ app.get('/', async function (req, res) {
   res.render('home', {
     data: data
   })
+
 })
 
 app.get('/stay_awake',(req,res) => {
@@ -39,4 +33,7 @@ app.get('/stay_awake',(req,res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port)
+app.listen(port, async () => {
+  console.log('Crawler Started...')
+  await fetchAll()
+})
