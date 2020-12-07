@@ -40,5 +40,5 @@ app.listen(port, async () => {
   setInterval(async () => {
     await fetchAll()
   }, 600000)
-  
+
 })

@@ -49,7 +49,7 @@ module.exports.fetchBusinessWire = async () => {
                                 symbolsArray.push('null')
                             }
                             let row = await dbHelper.insertIntoHits(`https://www.businesswire.com` + urlList[i], articleHeading, articleBody, timeList[i], symbolsArray[0], 'nasdaq')
-                            if(symbolsArray[0] != 'null')
+                            if(symbolsArray[0] !== 'null')
                                 await helpers.crawlWSJ(row.insertId, symbolsArray[0])
                         }
                         else if(articleHeading.includes('nyse') || articleBody.includes('nyse')) {
@@ -58,7 +58,7 @@ module.exports.fetchBusinessWire = async () => {
                                 symbolsArray.push('null')
                             }
                             let row = await dbHelper.insertIntoHits(`https://www.businesswire.com` + urlList[i], articleHeading, articleBody, timeList[i], symbolsArray[0], 'nyse')
-                            if(symbolsArray[0] != 'null')
+                            if(symbolsArray[0] !== 'null')
                                 await helpers.crawlWSJ(row.insertId, symbolsArray[0])
                         }
                         await dbHelper.insertIntoBusinessWire('https://www.businesswire.com' + urlList[i])
