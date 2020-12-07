@@ -34,5 +34,11 @@ app.get('/stay_awake',(req,res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, async () => {
   console.log('Crawler Started...')
+
   await fetchAll()
+
+  setInterval(async () => {
+    await fetchAll()
+  }, 600000)
+  
 })
