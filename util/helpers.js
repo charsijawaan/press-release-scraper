@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer')
-const dbHelper = require('./dbHelper')
+const dbHelper = require('./../database/dbHelper')
 
 module.exports.snooze = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -32,8 +32,8 @@ findIndexes = (source, find) => {
         return source.split('').map(function(_, i) { return i; });
     }
     let result = [];
-    for (i = 0; i < source.length; ++i) {
-        if (source.substring(i, i + find.length) == find) {
+    for (let i = 0; i < source.length; ++i) {
+        if (source.substring(i, i + find.length) === find) {
             result.push(i);
         }
     }
@@ -60,7 +60,7 @@ module.exports.getSymbols = (text, marketName, caseSensitiveSearch) => {
             }
         }
 
-        if (needle >= text.length - 1 || text[needle] != ':') {
+        if (needle >= text.length - 1 || text[needle] !== ':') {
             continue;
         }
         needle++;

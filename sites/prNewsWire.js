@@ -1,7 +1,7 @@
 const axios = require('axios')
 const $ = require('cheerio')
-const helpers = require('./helpers')
-const dbHelper = require('./dbHelper')
+const helpers = require('./../util/helpers')
+const dbHelper = require('./../database/dbHelper')
 
 module.exports.fetchPrNewsWire = async () => {
 

@@ -1,5 +1,5 @@
-let config = require('./config')
 let mysql = require('mysql')
+let config = require('./../config')
 
 let conn = mysql.createConnection({
     host     : config.db.host,
