@@ -18,9 +18,9 @@ module.exports.fetchGlobalNewsWire = async () => {
 
             for (let i = 0; i < urlList.length; i++) {
 
-                let result = await dbHelper.globalNewsWireArticlesExists(urlList[i])
+                let result = await dbHelper.globalNewsWireArticlesExists(`http://www.globenewswire.com` + urlList[i])
 
-                if (result.length == 0) {
+                if (result.length === 0) {
 
                     try {
                         let pageResponse = await axios.get(`http://www.globenewswire.com/` + urlList[i])

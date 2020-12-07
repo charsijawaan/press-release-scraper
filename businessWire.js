@@ -27,7 +27,7 @@ module.exports.fetchBusinessWire = async () => {
 
             for(let i = 0; i < urlList.length; i++) {
 
-                let result = await dbHelper.busineesWireArticlesExists(urlList[i])
+                let result = await dbHelper.busineesWireArticlesExists('https://www.businesswire.com' + urlList[i])
 
                 if(result.length === 0) {
                     try {

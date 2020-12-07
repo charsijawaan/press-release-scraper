@@ -106,6 +106,15 @@ parsePublicFloat = (str) => {
     return [numericPart, unitPart]
 }
 
+parse52WeekRange = (str) => {
+    let res = str.split("-")
+    // start index
+    res[0] = res[0].trim()
+    // end index
+    res[1] = res[1].trim()
+    return res
+}
+
 
 module.exports.crawlWSJ = async (id, ticker) => {
     const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
@@ -118,6 +127,7 @@ module.exports.crawlWSJ = async (id, ticker) => {
             const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0];
             const _3 = (await page.$x('//*[@id="quote_volume"]'))[0];
             const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0];
+            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[3]/li[4]/div/span[2]'))[0];
 
             try {
                 let publicFloat = await page.evaluate(el => {
@@ -136,13 +146,20 @@ module.exports.crawlWSJ = async (id, ticker) => {
                     return el.textContent;
                 }, _4)
 
+                let _52WeekRange = await page.evaluate(el => {
+                    return el.textContent;
+                }, _5)
+
 
                 let parsedPublicFloat = parsePublicFloat(publicFloat)
                 let parsedMarketCap = parsePublicFloat(marketCap)
                 volume = parseFloat(volume.replace(/\D/g,''))
                 let parsedChange = parsePublicFloat(change)
+                let parsed52WeekRange = parse52WeekRange(_52WeekRange)
 
-                await dbHelper.insertIntoWSJ(id, ticker, parseFloat(parsedPublicFloat[0]), parsedPublicFloat[1], parseFloat(parsedMarketCap[0]), parsedMarketCap[1], volume, parseFloat(parsedChange[0]), parsedChange[1])
+                await dbHelper.insertIntoWSJ(id, ticker, parseFloat(parsedPublicFloat[0]),
+                    parsedPublicFloat[1], parseFloat(parsedMarketCap[0]), parsedMarketCap[1],
+                    volume, parseFloat(parsedChange[0]), parsedChange[1], parsed52WeekRange[0], parsed52WeekRange[1])
 
                 await browser.close()
             }

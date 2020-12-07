@@ -20,7 +20,7 @@ module.exports.fetchPrNewsWire = async () => {
 
             for(let i = 0; i < urlList.length; i++) {
 
-                let result = await dbHelper.prNewsWireArticlesExists(urlList[i])
+                let result = await dbHelper.prNewsWireArticlesExists('https://www.prnewswire.com' + urlList[i])
 
                 if(result.length == 0) {
 
