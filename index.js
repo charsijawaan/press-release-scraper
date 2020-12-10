@@ -6,9 +6,11 @@ const businessWire = require('./sites/businessWire')
 const accessWire = require('./sites/accessWire')
 const globalNewsWire = require('./sites/globalNewsWire')
 const prNewsWire = require('./sites/prNewsWire')
+const helpers = require('./util/helpers')
 
 hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs')
+app.use(express.static(__dirname + '/public'))
 
 async function fetchAll() {
   await businessWire.fetchBusinessWire()
@@ -17,7 +19,7 @@ async function fetchAll() {
   await prNewsWire.fetchPrNewsWire()
 }
 
-app.get('/', async function (req, res) {
+app.get('/hits', async function (req, res) {
   
   let data = await dbHelper.getAllHits()
   
@@ -25,6 +27,30 @@ app.get('/', async function (req, res) {
     data: data
   })
 
+})
+
+app.get('/', async (req, res) => {
+  
+  if (req.query.atCloseMin != undefined && req.query.atCloseMax != undefined) {
+    
+  }
+
+  if (req.query.afterHoursMin != undefined && req.query.afterHoursMax != undefined) {
+    
+  }
+
+  if (req.query.floatMin != undefined && req.query.floatMax != undefined) {
+    
+  }
+
+  if (req.query.volumeMin != undefined && req.query.volumeMax != undefined) {
+    
+  }
+
+  let data = await dbHelper.getDataWSJ()
+  res.render('index', {
+      data: data
+  })
 })
 
 app.get('/stay_awake',(req,res) => {

@@ -31,8 +31,6 @@ module.exports.fetchBusinessWire = async () => {
 
                 if(result.length === 0) {
                     try {
-                        // let row = null
-                        // let symbolsArray = null
                         let pageResponse = await axios.get(`https://www.businesswire.com` + urlList[i])
                         let articleHeading = $('.bw-release-main header', pageResponse.data).text()
                         let articleBody = $('.bw-release-body', pageResponse.data).text()

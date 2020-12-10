@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Αληθεια</title>
+  <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="assets/css/nouislider.min.css">
+	<link rel="stylesheet" href="assets/css/ls-style.css">
+</head>
+
+<body id="dark">
+  <header class="dark-bb">
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="">
+					<img src="assets/img/logo.png">
+					<span class="d-inline-block ml-3" style="font-size: 23px;">Αληθεια</span>
+			</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerMenu"
+        aria-controls="headerMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="icon ion-md-menu"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="headerMenu">
+        <ul class="navbar-nav ml-auto">
+					<li class="nav-item header-custom-icon d-flex align-items-center">
+            <input id="heading-search-input" placeholder="Search Headings" class="mr-3" type="text" >
+          </li>
+					
+          <li class="nav-item header-custom-icon">
+            <a class="nav-link" href="#" id="clickFullscreen">
+              <i class="icon ion-md-expand"></i>
+            </a>
+          </li>
+					
+          <li class="nav-item dropdown header-img-icon">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="assets/img/avatar.svg" alt="avatar">
+            </a>
+            <div class="dropdown-menu">
+              <div class="dropdown-header d-flex flex-column align-items-center">
+                <div class="figure mb-3">
+                  <img src="assets/img/avatar.svg" alt="">
+                </div>
+                <div class="info text-center">
+                  <p class="name font-weight-bold mb-0">Alethia Arreola</p>
+                  <p class="email text-muted mb-3">Arrepa321@gmail.com</p>
+                </div>
+              </div>
+              <div class="dropdown-body">
+                <ul class="profile-nav">
+                  <li class="nav-item">
+                    <a href="settings-profile-dark.html" class="nav-link">
+                      <i class="icon ion-md-person"></i>
+                      <span>Profile</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="settings-dark.html" class="nav-link">
+                      <i class="icon ion-md-settings"></i>
+                      <span>Settings</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="exchange-dark.html" class="nav-link red">
+                      <i class="icon ion-md-power"></i>
+                      <span>Log Out</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <div class="markets ptb70">
+    <div class="cont">
+      <div class="row">
+        
+        <div class="col-md-12">
+          <div class="markets-pair-list">
+            <ul class="nav nav-pills table-options-panel" id="pills-tab" role="tablist">
+							
+              <li class="filters-panel table-option">
+								<label class="label-with-icon" id="filter-label">Filter &nbsp;&nbsp;<i class="fa fa-sort-desc"></i></label>
+								<ul class="filters-dropdown">
+									<li>
+										<h5 class="text-center filter-label">$ At Close</h5>
+										<div class="filter-track" id="atCloseFilter"></div>
+									</li>
+									
+									<li>
+										<h5 class="text-center filter-label">$ Pre-MKT/After Hours</h5>
+										<div class="filter-track" id="afterHoursFilter"></div>
+									</li>
+
+									<li>
+										<h5 class="text-center filter-label">Float</h5>
+										<div class="filter-track" id="floatFilter"></div>
+									</li>
+
+									<li>
+										<h5 class="text-center filter-label">Volume</h5>
+										<div class="filter-track" id="volumeFilter"></div>
+									</li>
+									
+									<li>
+										<button class="btn-primary" id="filter-btn">Apply Filter</button>
+									</li>
+								</ul>
+            	</li>
+							
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="BTC" role="tabpanel">
+                <table class="table" id="ale-table">
+                  <thead>
+                    <tr>
+                      <th>Ticker</th>
+											<th style="min-width: 246px;">PR Heading</th>
+                      <th>Date</th>
+											<th>Time</th>
+                      <th>$ at Close</th>
+                      <th>$ Pre-MKT/ $After hours</th>
+                      <th>Public Float</th>
+                      <th>Market Cap</th>
+                      <th>Short Change</th>
+											<th style="min-width: 127px;">52 Week Range</th>
+											<th>Volume</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+										{{#if data}}
+												{{#each data}}
+												<tr onclick="return false;" class="data-row">
+														<td class="ticker">{{this.ticker}}</td>
+														<td>
+															<a style="color: #fff;" href="{{this.url}}" class="pr-heading" data-heading="{{this.heading}}" target="_blank"></a>
+														</td>
+														<td class="date" data-date="{{this.date}}"></td>
+														<td class="time" data-time="{{this.date}}"></td>
+														<td class="price-at-close" data-value="{{this.stock_price_at_close}}">{{this.stock_price_at_close}}</td>
+														<td class="price-after-hours" data-value="{{this.stock_price_after_hours}}">{{this.stock_price_after_hours}}</td>
+														<td class="float" data-unit="{{this.public_float_unit_part}}" data-value="{{this.public_float}}">{{this.public_float}}</td>
+														<td class="market-cap" data-unit="{{this.market_cap_unit_part}}">{{this.market_cap}}</td>
+														<td class="change" data-change="{{this.change_from_last}}">{{this.change_from_last}}{{this.change_from_last_unit_part}}</td>
+														<td class="week-range">{{this.start_52_week_range}} - {{this.end_52_week_range}}</td>
+														<td class="volume" data-value="{{this.volume}}">{{this.volume}}</td>
+												</tr>
+												{{/each}}                        
+										{{/if}}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="text-center">
+              <a href="#" class="load-more btn">Load More <i class="icon ion-md-arrow-down"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/amcharts-core.min.js"></script>
+  <script src="assets/js/amcharts.min.js"></script>
+	<script src="assets/js/nouislider.min.js"></script>
+  <script src="assets/js/custom.js"></script>
+	<script>
+		$(function() {
+			$("#filter-label").click(function() {
+				$(".filters-dropdown").slideToggle("fast")
+			})
+			
+			$(".change").each((index, el) => {
+				if (Number($(el).attr("data-change")) > 0) {
+					$(el).addClass("green")
+				}
+				else if (Number($(el).attr("data-change")) < 0) {
+					$(el).addClass("red")
+				}
+			})
+			
+			$(".date").each((index, el) => {
+				let date = $(el).attr("data-date")
+				$(el).html(formatDate(date))
+			})
+			
+			$(".time").each((index, el) => {
+				let date = $(el).attr("data-time")
+				$(el).html(formatTime(date))
+			})
+			
+			$(".float").each((index, el) => {
+				let unit = $(el).attr("data-unit")
+				if (unit != "0") {
+					$(el).html($(el).html() + unit)
+				}
+			})
+			
+			$(".market-cap").each((index, el) => {
+				let unit = $(el).attr("data-unit")
+				if (unit != "0") {
+					$(el).html($(el).html() + unit)
+				}
+			})
+			
+			$(".pr-heading").each((index, el) => {
+				let heading = $(el).attr("data-heading").trim()
+				$(el).html(heading)
+			})
+			
+			$(".table tr").unbind("click")
+			
+			$(".pr-heading").click(function() {
+				window.location.href = $(this).attr("href")
+			})
+			
+			let dataTable = $('#ale-table').DataTable({
+				"pageLength": 50
+			});
+			
+			$('#heading-search-input').keyup(function(){
+				dataTable.search($(this).val()).draw()
+			})
+			
+			$("#ale-table").parent().css("overflow-x", "auto")
+			
+			var minFloat = Number.POSITIVE_INFINITY;
+			var maxFloat = Number.NEGATIVE_INFINITY;
+			var minVol = Number.POSITIVE_INFINITY;
+			var maxVol = Number.NEGATIVE_INFINITY;
+			var minPriceAtClose = Number.POSITIVE_INFINITY;
+			var maxPriceAtClose = Number.NEGATIVE_INFINITY;
+			var minPriceAfterHours = Number.POSITIVE_INFINITY;
+			var maxPriceAfterHours = Number.NEGATIVE_INFINITY;
+			
+			$(".data-row").each((index, el) => {
+				let priceAtClose = Number($(el).find(".price-at-close").attr("data-value").trim())
+				let priceAfterHours = Number($(el).find(".price-after-hours").attr("data-value").trim())
+				let volume = Number($(el).find(".volume").attr("data-value").trim())
+				let float = Number($(el).find(".float").attr("data-value").trim())
+				let floatUnit = $(el).find(".float").attr("data-unit").trim().toLowerCase()
+				
+				if (floatUnit === 'm') {
+					float = float * 1000000;
+				}
+				else if (floatUnit === 'b') {
+					float = float * 1000000000
+				}
+				
+				if (float < minFloat) {
+					minFloat = float
+				}
+				
+				if (float > maxFloat) {
+					maxFloat = float
+				}
+				
+				if (volume < minVol) {
+					minVol = volume
+				}
+				
+				if (volume > maxVol) {
+					maxVol = volume
+				}
+				
+				if (priceAtClose < minPriceAtClose) {
+					minPriceAtClose = priceAtClose
+				}
+				
+				if (priceAtClose > maxPriceAtClose) {
+					maxPriceAtClose = priceAtClose
+				}
+				
+				if (priceAfterHours < minPriceAfterHours) {
+					minPriceAfterHours = priceAfterHours
+				}
+				
+				if (priceAfterHours > maxPriceAfterHours) {
+					maxPriceAfterHours = priceAfterHours
+				}
+			})
+			
+			
+			$("#minValAtClose").html(minPriceAtClose)
+			$("#maxValAtClose").html(maxPriceAtClose)
+			$("#minValAfterHours").html(minPriceAfterHours)
+			$("#maxValAfterHours").html(maxPriceAfterHours)
+			$("#minValFloat").html(minFloat)
+			$("#maxValFloat").html(maxFloat)
+			$("#minValVolume").html(minVol)
+			$("#maxValVolume").html(maxVol)
+			
+			var atCloseFilter = document.getElementById("atCloseFilter")
+			noUiSlider.create(atCloseFilter, {
+				start: [minPriceAtClose, maxPriceAtClose],
+				tooltips: true,
+				connect: true,
+				step: (maxPriceAtClose - minPriceAtClose) / 100,
+				range: {
+						'min': minPriceAtClose,
+						'max': maxPriceAtClose
+				}
+			})
+			
+			var afterHoursFilter = document.getElementById("afterHoursFilter")
+			noUiSlider.create(afterHoursFilter, {
+				start: [minPriceAfterHours, maxPriceAfterHours],
+				tooltips: true,
+				connect: true,
+				step: (maxPriceAfterHours - minPriceAfterHours) / 100,
+				range: {
+						'min': minPriceAfterHours,
+						'max': maxPriceAfterHours
+				}
+			})
+			
+			var floatFilter = document.getElementById("floatFilter")
+			noUiSlider.create(floatFilter, {
+				start: [minFloat, maxFloat],
+				tooltips: true,
+				connect: true,
+				step: (maxFloat - minFloat) / 100,
+				range: {
+						'min': minFloat,
+						'max': maxFloat
+				}
+			})
+			
+			var volumeFilter = document.getElementById("volumeFilter")
+			noUiSlider.create(volumeFilter, {
+				start: [minVol, maxVol],
+				tooltips: true,
+				connect: true,
+				step: (maxVol - minVol) / 100,
+				range: {
+						'min': minVol,
+						'max': maxVol
+				}
+			})
+			
+			$("#filter-btn").click(function() {
+				let atCloseRange = atCloseFilter.noUiSlider.get()
+				let afterHoursRange = afterHoursFilter.noUiSlider.get()
+				let floatRange = floatFilter.noUiSlider.get()
+				let volumeRange = volumeFilter.noUiSlider.get()
+				
+				var queryString = "?"
+				
+				if (atCloseRange[0] != minPriceAtClose || atCloseRange[1] != maxPriceAtClose) {
+					// apply atClose filter
+					queryString += `atCloseMin=${atCloseRange[0]}&atCloseMax=${atCloseRange[1]}`
+				}
+				
+				if (afterHoursRange[0] != minPriceAfterHours || afterHoursRange[1] != maxPriceAfterHours) {
+					// apply afterHours filter
+					queryString += `&afterHoursMin=${afterHoursRange[0]}&afterHoursMax=${afterHoursRange[1]}`
+				}
+				
+				if (floatRange[0] != minFloat || floatRange[1] != maxFloat) {
+					// apply float filter
+					queryString += `&floatMin=${floatRange[0]}&floatMax=${floatRange[1]}`
+				}
+				
+				if (volumeRange[0] != minVol || volumeRange[1] != maxVol) {
+					// apply volume filter
+					queryString += `&volumeMin=${volumeRange[0]}&volumeMax=${volumeRange[1]}`
+				}
+				
+				let baseUrl = window.location.origin
+				window.location.href = baseUrl + queryString
+			})
+		})
+		
+		function formatDate(date) {
+			let parts = date.split(" ")
+			return parts[1] + " " + parts[2] + " " + parts[3]
+		}
+		
+		function formatTime(time) {
+			let parts = time.split(" ")
+			return parts[4]
+		}
+	</script>
+</body>
+
+</html>

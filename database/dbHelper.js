@@ -138,6 +138,18 @@ module.exports = {
                     resolve(rows)
             })
         })
+    },
+
+    getDataWSJ: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = 'SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name FROM wsj INNER JOIN hits ON wsj.id = hits.id ORDER BY id DESC'
+            conn.query(sqlQuery, [], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
     }
 
 }
