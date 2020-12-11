@@ -261,17 +261,20 @@ module.exports.crawlWSJ = async (id, ticker) => {
             catch (ex) {
                 console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
                 console.log(ex)
+                await browser.close()
             }
         }
         catch (ex) {
             console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
             console.log(ex)
+            await browser.close()
         }
 
     }
     catch (ex) {
         console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
         console.log(ex)
+        await browser.close()
     }
 
 }

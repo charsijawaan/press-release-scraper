@@ -18,7 +18,6 @@ module.exports.fetchBusinessWire = async () => {
                 timeList.push(elem.attribs.datetime)
             })
 
-
             $('a', mainContainer.html()).each((i, elem) => {
                 urlList.push(elem.attribs.href)
             })
