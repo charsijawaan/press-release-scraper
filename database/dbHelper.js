@@ -142,7 +142,122 @@ module.exports = {
 
     getDataWSJ: () => {
         return new Promise((resolve, reject) => {
-            let sqlQuery = 'SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name FROM wsj INNER JOIN hits ON wsj.id = hits.id ORDER BY id DESC'
+            let sqlQuery = `SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name 
+            FROM wsj INNER JOIN hits ON wsj.id = hits.id ORDER BY hits.date DESC`
+            conn.query(sqlQuery, [], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    getAllErrorsFromWSJ: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `SELECT * FROM wsj WHERE public_float = ? AND public_float_unit_part = ? 
+            AND market_cap = ? AND market_cap_unit_part = ? AND volume = ? AND change_from_last = ? 
+            AND change_from_last_unit_part = ? AND start_52_week_range = ? AND end_52_week_range = ? 
+            AND stock_price_at_close = ? AND stock_price_after_hours = ?`
+            conn.query(sqlQuery, [0,0,0,0,0,0,0,0,0,0,0], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    getHitWithID: (id) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `SELECT * FROM hits WHERE id = ? LIMIT 1`
+            conn.query(sqlQuery, [id], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteRowInBusinessNewsWire: (url) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM businesswire_articles WHERE url = ? LIMIT 1`
+            conn.query(sqlQuery, [url], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteRowInGlobalNewsWire: (url) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM globalnewswire_articles WHERE url = ? LIMIT 1`
+            conn.query(sqlQuery, [url], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteRowInPrNewsWire: (url) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM prnewswire_articles WHERE url = ? LIMIT 1`
+            conn.query(sqlQuery, [url], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteRowInAccessNewsWire: (url) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM accesswire_articles WHERE url = ? LIMIT 1`
+            conn.query(sqlQuery, [url], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteRowInhits: (url) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM hits WHERE url = ? LIMIT 1`
+            conn.query(sqlQuery, [url], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteErrorsInWSJ: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE FROM wsj WHERE public_float = ? AND public_float_unit_part = ? 
+            AND market_cap = ? AND market_cap_unit_part = ? AND volume = ? AND change_from_last = ? 
+            AND change_from_last_unit_part = ? AND start_52_week_range = ? AND end_52_week_range = ? 
+            AND stock_price_at_close = ? AND stock_price_after_hours = ?`
+            conn.query(sqlQuery, [0,0,0,0,0,0,0,0,0,0,0], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    deleteOldData: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `DELETE hits, wsj FROM hits INNER JOIN wsj ON hits.id = wsj.id WHERE hits.date < DATE_SUB(Date(NOW()), INTERVAL 3 DAY)`
             conn.query(sqlQuery, [], (err, res, fields) => {
                 if (err)
                     reject(err)

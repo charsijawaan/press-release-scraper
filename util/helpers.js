@@ -150,6 +150,20 @@ module.exports.convertTime = (time) => {
     return `${time[2]}-${month}-${time[1]} ${time[3]}`
 }
 
+module.exports.extractHostname = (url) => {
+    var hostname
+
+    if (url.indexOf("//") > -1) 
+        hostname = url.split('/')[2]    
+    else
+        hostname = url.split('/')[0]
+    
+    hostname = hostname.split(':')[0]
+    hostname = hostname.split('?')[0]
+
+    return hostname
+}
+
 
 module.exports.crawlWSJ = async (id, ticker) => {
     const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
