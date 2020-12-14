@@ -33,11 +33,13 @@ app.use(expressSession({
 }))
 
 async function fetchAll() {
-  // await businessWire.fetchBusinessWire()
-  // await accessWire.fetchAccessWire()
+  await businessWire.fetchBusinessWire()
+  await accessWire.fetchAccessWire()
   await globalNewsWire.fetchGlobalNewsWire()
-  // await prNewsWire.fetchPrNewsWire()
+  await prNewsWire.fetchPrNewsWire()
   await removeErrors()
+
+  setTimeout(fetchAll, 1)
 }
 
 async function removeErrors() {
@@ -150,10 +152,6 @@ const port = process.env.PORT || 3000
 app.listen(port, async () => {
   console.log('Crawler Started...')
 
-  await fetchAll()
-
-  setInterval(async () => {
-    await fetchAll()
-  }, 700000)
+  fetchAll()
 
 })
