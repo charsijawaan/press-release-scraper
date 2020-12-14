@@ -224,8 +224,8 @@ module.exports.crawlWSJ = async (id, ticker) => {
             const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0]
             const _3 = (await page.$x('//*[@id="quote_volume"]'))[0]
             const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0]
-            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[3]/li[4]/div/span[2]'))[0]
-
+            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[2]/li[4]/div/span[2]'))[0]
+            
             // At Close
             const _6 = (await page.$x('//*[@id="quote_val"]'))[0]
 
