@@ -164,6 +164,54 @@ module.exports.extractHostname = (url) => {
     return hostname
 }
 
+getGlobalMonth = (str) => {
+    if(str === 'january') {
+        return '01'
+    }
+    else if(str === 'february') {
+        return '02'
+    }
+    else if(str === 'march') {
+        return '03'
+    }
+    else if(str === 'april') {
+        return '04'
+    }
+    else if(str === 'may') {
+        return '05'
+    }
+    else if(str === 'june') {
+        return '06'
+    }
+    else if(str === 'july') {
+        return '07'
+    }
+    else if(str === 'august') {
+        return '08'
+    }
+    else if(str === 'september') {
+        return '09'
+    }
+    else if(str === 'october') {
+        return '10'
+    }
+    else if(str === 'november') {
+        return '11'
+    }
+    else if(str === 'december') {
+        return '12'
+    }
+}
+
+module.exports.convertGlobalNewsTime = (time) => {
+    time = time.replace(/,/g, "")
+    time = time.split(" ")
+
+    let month = getGlobalMonth(time[0].toLowerCase())
+    return `${time[2]}-${month}-${time[1]} ${time[3]}`
+    
+}
+
 
 module.exports.crawlWSJ = async (id, ticker) => {
     const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});

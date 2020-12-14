@@ -20,5 +20,4 @@ config.db.dbName = 'scraper_db'
 config.db.port = 3306
 
 module.exports = config
-// module.exports = sessionSecret
 

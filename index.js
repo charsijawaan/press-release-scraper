@@ -33,10 +33,10 @@ app.use(expressSession({
 }))
 
 async function fetchAll() {
-  await businessWire.fetchBusinessWire()
-  await accessWire.fetchAccessWire()
+  // await businessWire.fetchBusinessWire()
+  // await accessWire.fetchAccessWire()
   await globalNewsWire.fetchGlobalNewsWire()
-  await prNewsWire.fetchPrNewsWire()
+  // await prNewsWire.fetchPrNewsWire()
   await removeErrors()
 }
 

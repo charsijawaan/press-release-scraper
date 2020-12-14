@@ -30,14 +30,13 @@ module.exports.fetchGlobalNewsWire = async () => {
                         let articleTime = null
 
                         $('time', articleMetaData.html()).each((i, elem) => {
-                            articleTime = elem.attribs.datetime
-                        })
+                            let timestr = elem.children[0].data
+                            articleTime = helpers.convertGlobalNewsTime(timestr)
+                            console.log(articleTime)
+                        })                        
 
                         articleHeading = articleHeading.toLowerCase()
                         articleBody = articleBody.toLowerCase()
-
-                        articleTime = articleTime.replace('T', ' ')
-                        articleTime = articleTime.replace('Z', '')
 
                         if (articleHeading.includes('nasdaq') || articleBody.includes('nasdaq')) {
                             let symbolsArray = helpers.getSymbols(articleHeading + ' ' + articleBody, 'nasdaq')
