@@ -153,6 +153,18 @@ module.exports = {
         })
     },
 
+    getHitsWithoutWSJ: () => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = 'SELECT * FROM hits WHERE NOT EXISTS (SELECT * FROM wsj WHERE wsj.id = hits.id) ORDER BY hits.date DESC'
+            conn.query(sqlQuery, [], (err, res, fileds) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
     getAllErrorsFromWSJ: () => {
         return new Promise((resolve, reject) => {
             let sqlQuery = `SELECT * FROM wsj WHERE public_float = ? AND public_float_unit_part = ? 
@@ -259,6 +271,18 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let sqlQuery = `DELETE hits, wsj FROM hits INNER JOIN wsj ON hits.id = wsj.id WHERE hits.date < DATE_SUB(Date(NOW()), INTERVAL 3 DAY)`
             conn.query(sqlQuery, [], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    checkLogin: (username, password) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `SELECT * FROM login_details WHERE username = ? AND password = ?`
+            conn.query(sqlQuery, [username, password], (err, res, fields) => {
                 if (err)
                     reject(err)
                 else

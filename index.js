@@ -1,17 +1,36 @@
+// Import modules
 let cron = require('node-cron')
-const express = require('express')
-const app = express()
+let expressSession = require('express-session')
+let bodyParser = require('body-parser')
+let express = require('express')
+// import memory store
+var MemoryStore = require('memorystore')(expressSession)
+let app = express()
 let hbs = require('hbs')
-const dbHelper = require('./database/dbHelper')
-const businessWire = require('./sites/businessWire')
-const accessWire = require('./sites/accessWire')
-const globalNewsWire = require('./sites/globalNewsWire')
-const prNewsWire = require('./sites/prNewsWire')
-const helpers = require('./util/helpers')
+let dbHelper = require('./database/dbHelper')
+let config = require('./config')
+let businessWire = require('./sites/businessWire')
+let accessWire = require('./sites/accessWire')
+let globalNewsWire = require('./sites/globalNewsWire')
+let prNewsWire = require('./sites/prNewsWire')
+let helpers = require('./util/helpers')
 
+// Templating engine settings
 hbs.registerPartials(__dirname + '/views/partials')
 app.set('view engine', 'hbs')
 app.use(express.static(__dirname + '/public'))
+
+// Express session settigns
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressSession({
+  cookie: { maxAge: 43200000 },
+    store: new MemoryStore({
+      checkPeriod: 43200000
+    }),
+    resave: false,
+    secret: config.sessionSecret,
+    saveUninitialized: true
+}))
 
 async function fetchAll() {
   await businessWire.fetchBusinessWire()
@@ -69,28 +88,57 @@ app.get('/hits', async function (req, res) {
 })
 
 app.get('/', async (req, res) => {
+  if(req.session.user) {
+
+    if (req.query.atCloseMin != undefined && req.query.atCloseMax != undefined) {
+    
+    }
   
-  if (req.query.atCloseMin != undefined && req.query.atCloseMax != undefined) {
-    
+    if (req.query.afterHoursMin != undefined && req.query.afterHoursMax != undefined) {
+      
+    }
+  
+    if (req.query.floatMin != undefined && req.query.floatMax != undefined) {
+      
+    }
+  
+    if (req.query.volumeMin != undefined && req.query.volumeMax != undefined) {
+      
+    }
+
+    let wsjData = await dbHelper.getDataWSJ()
+    let hitsOnly = await dbHelper.getHitsWithoutWSJ()
+
+    res.render('index', {
+      data: wsjData,
+      hitsOnly: hitsOnly
+    })
+
   }
-
-  if (req.query.afterHoursMin != undefined && req.query.afterHoursMax != undefined) {
-    
+  else {
+    res.redirect(config.webAddress + 'login')
   }
+})
 
-  if (req.query.floatMin != undefined && req.query.floatMax != undefined) {
-    
+app.post('/', async (req, res) => {
+
+  let username = req.body.username;
+  let password = req.body.password;
+
+  let user = await dbHelper.checkLogin(username, password)
+
+  if(user.length > 0) {
+    req.session.user = user[0]      
+    res.redirect(config.webAddress)
   }
+  else {
+    res.redirect(config.webAddress + 'login')
+  }  
 
-  if (req.query.volumeMin != undefined && req.query.volumeMax != undefined) {
-    
-  }
+})
 
-  let data = await dbHelper.getDataWSJ()
-  res.render('index', {
-      data: data
-  })
-
+app.get('/login', async (req, res) => {
+  res.render('login', {})
 })
 
 app.get('/stay_awake',(req,res) => {

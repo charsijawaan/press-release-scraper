@@ -24,11 +24,13 @@ body {
     padding: 0px 10px;
     color: #5e6b7c;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 .filters-dropdown {
     background-color: rgb(21 23 30 / 93%);
     position: absolute;
-    right: 15px;
     padding: 14px 0px;
     list-style: none;
     width: 350px;
@@ -133,6 +135,9 @@ table th {
 #ale-table_filter, #ale-table_length {
 	display: none !important;
 }
+#hits-only-table_filter, #hits-only-table_length {
+  display: none !important;
+}
 .pagination {
 	margin-top: 8px !important;
 }
@@ -174,4 +179,8 @@ table th {
 }
 .filter-track {
 	margin-top: 24px;
+}
+table.dataTable span.highlight {
+  background-color: #ffffff !important;
+  color: #000 !important;
 }
