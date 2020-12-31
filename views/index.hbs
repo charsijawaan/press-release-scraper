@@ -8,6 +8,8 @@
   <title>Αληθεια</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/plug-ins/1.10.22/features/searchHighlight/dataTables.searchHighlight.css">
@@ -16,6 +18,7 @@
 </head>
 
 <body id="dark">
+
   <header class="dark-bb">
     <nav class="navbar navbar-expand-lg">
       <a class="navbar-brand" href="">
@@ -57,13 +60,13 @@
               <div class="dropdown-body">
                 <ul class="profile-nav">
                   <li class="nav-item">
-                    <a href="settings-profile-dark.html" class="nav-link">
+                    <a href="#" class="nav-link">
                       <i class="icon ion-md-person"></i>
                       <span>Profile</span>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="settings-dark.html" class="nav-link">
+                    <a href="#" class="nav-link">
                       <i class="icon ion-md-settings"></i>
                       <span>Settings</span>
                     </a>
@@ -84,6 +87,9 @@
   </header>
   <div class="markets ptb70">
     <div class="cont">
+		<div class="mb-2 d-none" id="goBackLink">
+			<a href="{{baseURL}}">Go Back</a>
+		</div>
       <div class="row">
         <div class="col-md-12">
           <div class="markets-pair-list">
@@ -341,16 +347,7 @@
 					maxPriceAfterHours = priceAfterHours
 				}
 			})
-			
-			
-			$("#minValAtClose").html(minPriceAtClose)
-			$("#maxValAtClose").html(maxPriceAtClose)
-			$("#minValAfterHours").html(minPriceAfterHours)
-			$("#maxValAfterHours").html(maxPriceAfterHours)
-			$("#minValFloat").html(minFloat)
-			$("#maxValFloat").html(maxFloat)
-			$("#minValVolume").html(minVol)
-			$("#maxValVolume").html(maxVol)
+
 			
 			var atCloseFilter = document.getElementById("atCloseFilter")
 			noUiSlider.create(atCloseFilter, {
@@ -359,22 +356,36 @@
 				connect: true,
 				step: (maxPriceAtClose - minPriceAtClose) / 100,
 				range: {
-						'min': minPriceAtClose,
-						'max': maxPriceAtClose
+					'min': minPriceAtClose,
+					'max': maxPriceAtClose
 				}
 			})
 			
 			var afterHoursFilter = document.getElementById("afterHoursFilter")
-			noUiSlider.create(afterHoursFilter, {
-				start: [minPriceAfterHours, maxPriceAfterHours],
-				tooltips: true,
-				connect: true,
-				step: (maxPriceAfterHours - minPriceAfterHours) / 100,
-				range: {
+			if (minPriceAfterHours != maxPriceAfterHours) {
+				noUiSlider.create(afterHoursFilter, {
+					start: [minPriceAfterHours, maxPriceAfterHours],
+					tooltips: true,
+					connect: true,
+					step: (maxPriceAfterHours - minPriceAfterHours) / 100,
+					range: {
 						'min': minPriceAfterHours,
 						'max': maxPriceAfterHours
-				}
-			})
+					}
+				})
+			}
+			else {
+				noUiSlider.create(afterHoursFilter, {
+					start: [0, 1],
+					tooltips: true,
+					connect: true,
+					step: (1 - 0) / 100,
+					range: {
+						'min': 0,
+						'max': 1
+					}
+				})
+			}
 			
 			var floatFilter = document.getElementById("floatFilter")
 			noUiSlider.create(floatFilter, {
@@ -383,8 +394,8 @@
 				connect: true,
 				step: (maxFloat - minFloat) / 100,
 				range: {
-						'min': minFloat,
-						'max': maxFloat
+					'min': minFloat,
+					'max': maxFloat
 				}
 			})
 			
@@ -395,17 +406,32 @@
 				connect: true,
 				step: (maxVol - minVol) / 100,
 				range: {
-						'min': minVol,
-						'max': maxVol
+					'min': minVol,
+					'max': maxVol
 				}
 			})
+
+
+			let atCloseRange = atCloseFilter.noUiSlider.get()
+			let afterHoursRange = afterHoursFilter.noUiSlider.get()
+			let floatRange = floatFilter.noUiSlider.get()
+			let volumeRange = volumeFilter.noUiSlider.get()
+
+			minPriceAtClose = atCloseRange[0]
+			maxPriceAtClose = atCloseRange[1]
+			minPriceAfterHours = afterHoursRange[0]
+			maxPriceAfterHours = afterHoursRange[1]
+			minFloat = floatRange[0]
+			maxFloat = floatRange[1]
+			minVol = volumeRange[0]
+			maxVol = volumeRange[1]
 			
 			$("#filter-btn").click(function() {
-				let atCloseRange = atCloseFilter.noUiSlider.get()
-				let afterHoursRange = afterHoursFilter.noUiSlider.get()
-				let floatRange = floatFilter.noUiSlider.get()
-				let volumeRange = volumeFilter.noUiSlider.get()
-				
+				atCloseRange = atCloseFilter.noUiSlider.get()
+				afterHoursRange = afterHoursFilter.noUiSlider.get()
+				floatRange = floatFilter.noUiSlider.get()
+				volumeRange = volumeFilter.noUiSlider.get()
+
 				var queryString = "?"
 				
 				if (atCloseRange[0] != minPriceAtClose || atCloseRange[1] != maxPriceAtClose) {
@@ -441,6 +467,21 @@
 		function formatTime(time) {
 			let parts = time.split(" ")
 			return parts[4]
+		}
+
+		if (filterExists()) {
+			$("#goBackLink").removeClass("d-none")
+		}
+
+		function filterExists() {
+			var field1 = 'atCloseMin'
+			var field2 = 'afterHoursMin'
+			var field3 = 'floatMin'
+			var field4 = 'volumeMin'
+
+			var url = window.location.href
+			if(url.indexOf(field1 + '=') != -1 || url.indexOf(field2 + '=') != -1 || url.indexOf(field3 + '=') != -1 || url.indexOf(field4 + '=') != -1)
+				return true
 		}
 	</script>
 </body>

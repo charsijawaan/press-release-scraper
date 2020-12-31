@@ -153,6 +153,82 @@ module.exports = {
         })
     },
 
+    getDataWSJFiltered: (atCloseRange, afterHoursRange, floatRange, volumeRange) => {
+        return new Promise((resolve, reject) => {
+
+            let filterQuery = ""
+            let and = ""
+            let where = ""
+            let first = true
+
+            if (atCloseRange != undefined) {
+                if (first) {
+                    where = "WHERE"
+                    and = ""
+                    first = false
+                }
+                else {
+                    where = ""
+                    and = "AND"
+                }
+
+                filterQuery += " " + where + " " + and + " wsj.stock_price_at_close >= " + atCloseRange.min + " AND wsj.stock_price_at_close <= " + atCloseRange.max
+            }
+
+            if (afterHoursRange != undefined) {
+                if (first) {
+                    where = "WHERE"
+                    and = ""
+                    first = false
+                }
+                else {
+                    where = ""
+                    and = "AND"
+                }
+
+                filterQuery += " " + where + " " + and + " wsj.stock_price_after_hours >= " + afterHoursRange.min + " AND wsj.stock_price_after_hours <= " + afterHoursRange.max
+            }
+
+            if (floatRange != undefined) {
+                if (first) {
+                    where = "WHERE"
+                    and = ""
+                    first = false
+                }
+                else {
+                    where = ""
+                    and = "AND"
+                }
+
+                filterQuery += " " + where + " " + and + " public_float >= IF(public_float_unit_part = 'M', " + floatRange.min + " / 1000000, " + floatRange.min + " / 1000000000) AND public_float <= IF (public_float_unit_part = 'M', " + floatRange.max + " / 1000000, " + floatRange.max + " / 1000000000)"
+            }
+
+            if (volumeRange != undefined) {
+                if (first) {
+                    where = "WHERE"
+                    and = ""
+                    first = false
+                }
+                else {
+                    where = ""
+                    and = "AND"
+                }
+
+                filterQuery += " " + where + " " + and + " wsj.volume >= " + volumeRange.min + " AND wsj.volume <= " + volumeRange.max
+            }
+
+            let sqlQuery = `SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name 
+            FROM wsj INNER JOIN hits ON wsj.id = hits.id ${filterQuery} ORDER BY hits.date DESC`
+            console.log(sqlQuery)
+            conn.query(sqlQuery, [], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
     getHitsWithoutWSJ: () => {
         return new Promise((resolve, reject) => {
             let sqlQuery = 'SELECT * FROM hits WHERE NOT EXISTS (SELECT * FROM wsj WHERE wsj.id = hits.id) ORDER BY hits.date DESC'

@@ -91,23 +91,40 @@ app.get('/hits', async function (req, res) {
 app.get('/', async (req, res) => {
   if(req.session.user) {
 
+    let atCloseRange = undefined
+    let afterHoursRange = undefined
+    let floatRange = undefined
+    let volumeRange = undefined
+
     if (req.query.atCloseMin != undefined && req.query.atCloseMax != undefined) {
-    
+      atCloseRange = {
+        min: req.query.atCloseMin,
+        max: req.query.atCloseMax
+      }
     }
   
     if (req.query.afterHoursMin != undefined && req.query.afterHoursMax != undefined) {
-      
+      afterHoursRange = {
+        min: req.query.afterHoursMin,
+        max: req.query.afterHoursMax
+      }
     }
   
     if (req.query.floatMin != undefined && req.query.floatMax != undefined) {
-      
+      floatRange = {
+        min: req.query.floatMin,
+        max: req.query.floatMax
+      }
     }
   
     if (req.query.volumeMin != undefined && req.query.volumeMax != undefined) {
-      
+      volumeRange = {
+        min: req.query.volumeMin,
+        max: req.query.volumeMax
+      }
     }
 
-    let wsjData = await dbHelper.getDataWSJ()
+    let wsjData = await dbHelper.getDataWSJFiltered(atCloseRange, afterHoursRange, floatRange, volumeRange)
     let hitsOnly = await dbHelper.getHitsWithoutWSJ()
 
     res.render('index', {
