@@ -51,7 +51,7 @@
                 </div>
                 <div class="info text-center">
                   <p class="name font-weight-bold mb-0">Alethia Arreola</p>
-                  <p class="email text-muted mb-3">Arrepa321@gmail.com</p>
+                  <p class="email text-muted mb-3">arrepa321@gmail.com</p>
                 </div>
               </div>
               <div class="dropdown-body">
@@ -69,7 +69,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="exchange-dark.html" class="nav-link red">
+                    <a href="{{baseURL}}logout" class="nav-link red">
                       <i class="icon ion-md-power"></i>
                       <span>Log Out</span>
                     </a>
@@ -166,6 +166,7 @@
                       <th>Public Float</th>
                       <th>Market Cap</th>
                       <th>Short Change</th>
+					  <th>Percent of Float</th>
 					  <th style="min-width: 127px;">52 Week Range</th>
 					  <th>Volume</th>
                     </tr>
@@ -185,6 +186,7 @@
 								<td class="float" data-unit="{{this.public_float_unit_part}}" data-value="{{this.public_float}}">{{this.public_float}}</td>
 								<td class="market-cap" data-unit="{{this.market_cap_unit_part}}">{{this.market_cap}}</td>
 								<td class="change" data-change="{{this.change_from_last}}">{{this.change_from_last}}{{this.change_from_last_unit_part}}</td>
+								<td class="percent-float" data-percent-float="{{this.percent_of_float}}">{{this.percent_of_float}}{{this.percent_of_float_unit_part}}</td>
 								<td class="week-range">{{this.start_52_week_range}} - {{this.end_52_week_range}}</td>
 								<td class="volume" data-value="{{this.volume}}">{{this.volume}}</td>
 							</tr>

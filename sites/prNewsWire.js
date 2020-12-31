@@ -8,7 +8,7 @@ module.exports.fetchPrNewsWire = async () => {
     console.log('Fetching from Pr News Wire...')
 
     try {
-        let response = await axios.get('https://www.prnewswire.com/news-releases/news-releases-list/')
+        let response = await axios.get('https://www.prnewswire.com/news-releases/news-releases-list/?page=1&pagesize=50')
         let urlList = []
 
         try {
@@ -18,6 +18,9 @@ module.exports.fetchPrNewsWire = async () => {
             })
 
             urlList = helpers.getUnique(urlList)
+
+            console.log(urlList.length)
+            console.log(urlList)
 
             for(let i = 0; i < urlList.length; i++) {
 
@@ -58,6 +61,7 @@ module.exports.fetchPrNewsWire = async () => {
                     }
                     await dbHelper.insertIntoPrnewsWire('https://www.prnewswire.com' + urlList[i])
                 }
+                console.log('https://www.prnewswire.com' + urlList[i] + ' ::::: completed')
             }
         }
         catch (ex) {

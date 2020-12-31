@@ -1,6 +1,10 @@
 const puppeteer = require('puppeteer')
 const dbHelper = require('./../database/dbHelper')
 
+module.exports.get6DigitCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
 module.exports.snooze = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -82,7 +86,6 @@ module.exports.getSymbols = (text, marketName, caseSensitiveSearch) => {
 
         symbols.push(symbol.join(''));
     }
-
     return symbols;
 }
 
@@ -217,121 +220,143 @@ module.exports.crawlWSJ = async (id, ticker) => {
     const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     try {
-        await page.goto(`https://www.wsj.com/market-data/quotes/${ticker}`, { waitUntil: 'networkidle2' })
-
-        try {
-            const _1 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[5]/div/span'))[0]
-            const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0]
-            const _3 = (await page.$x('//*[@id="quote_volume"]'))[0]
-            const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0]
-            const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[1]/div[2]/div[1]/ul[2]/li[4]/div/span[2]'))[0]
-                                      
-            // At Close
-            const _6 = (await page.$x('//*[@id="quote_val"]'))[0]
-
-            // After Hours
-            const _7 = (await page.$x('//*[@id="ms_quote_val"]'))[0]
-
+        let response = await page.goto(`https://www.wsj.com/market-data/quotes/${ticker}`, { waitUntil: 'networkidle2' })
+        if(response._status !== 404) {
             try {
-
-                let publicFloat
-                let parsedPublicFloat
+                const _1 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[5]/div/span'))[0]
+                const _2 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[1]/ul/li[3]/div/span/text()'))[0]
+                const _3 = (await page.$x('//*[@id="quote_volume"]'))[0]
+                const _4 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[2]/div/span/span'))[0]
+                const _5 = (await page.$x('//*[@id="root"]/div/div/div/div[2]/div/div/div[2]/div[1]/div[2]/div/div[2]/div[2]/ul/li[3]/div/span'))[0]
+                                          
+                // At Close
+                const _6 = (await page.$x('//*[@id="quote_val"]'))[0]
+    
+                // After Hours
+                const _7 = (await page.$x('//*[@id="ms_quote_val"]'))[0]
+    
                 try {
-                    publicFloat = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _1)
-                    parsedPublicFloat = parsePublicFloat(publicFloat)
+    
+                    let publicFloat
+                    let parsedPublicFloat
+                    try {
+                        publicFloat = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _1)
+                        parsedPublicFloat = parsePublicFloat(publicFloat)
+                    }
+                    catch (ex) {
+                        parsedPublicFloat = [0, 0]
+                    }                    
+    
+                    let marketCap
+                    let parsedMarketCap
+                    try {
+                        marketCap = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _2)
+                        parsedMarketCap = parsePublicFloat(marketCap)
+                    }
+                    catch (ex) {
+                        parsedMarketCap = [0, 0]
+                    }
+    
+                    let volume
+                    try {
+                        volume = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _3)
+                        volume = parseFloat(volume.replace(/\D/g,''))
+                    }
+                    catch (ex) {
+                        volume = 0
+                    }
+    
+                    let change
+                    let parsedChange
+                    try {
+                        change = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _4)
+                        parsedChange = parsePublicFloat(change)
+                    }
+                    catch (ex) {
+                        parsedChange = [0, 0]
+                    }
+                    // 
+                    let percentOfFloat
+                    let parsedPercentOfFloat
+                    try {
+                        percentOfFloat = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _5)
+                        parsedPercentOfFloat = parsePublicFloat(percentOfFloat)
+                    }
+                    catch (ex) {
+                        parsedPercentOfFloat = [0, 0]
+                    }
+                    
+                    let _52WeekRange
+                    let parsed52WeekRange
+                    try {
+                        _52WeekRange = await page.evaluate(() => {
+                            let weekRange
+                            let fourLis = document.querySelectorAll('.WSJTheme--cr_data_collection--iWUQrmxW.WSJTheme--cr_charts_info--2kjT6q10')
+                            
+                            for(let i = 0; i < fourLis[0].childNodes.length; i++) {
+                                let li = fourLis[0].childNodes[i].querySelector('.WSJTheme--data_lbl--39ZDSLax')
+                                if(li.textContent === '52 Week Range') {
+                                    weekRange = li.nextSibling.textContent;
+                                }
+                            }
+                            return weekRange;
+                        });
+                        parsed52WeekRange = parse52WeekRange(_52WeekRange)
+                    }
+                    catch(ex) {
+                        parsed52WeekRange = [0, 0]
+                    }
+
+                    let stockPriceAtClose
+                    try {
+                        stockPriceAtClose = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _6)
+                    }
+                    catch (ex) {
+                        stockPriceAtClose = 0
+                    }
+    
+                    let stockPriceAfterHours
+                    try {
+                        stockPriceAfterHours = await page.evaluate(el => {
+                            return el.textContent;
+                        }, _7)
+                    }
+                    catch (ex) {
+                        stockPriceAfterHours = 0
+                    }
+    
+                    await dbHelper.insertIntoWSJ(id, ticker, parseFloat(parsedPublicFloat[0]),
+                        parsedPublicFloat[1], parseFloat(parsedMarketCap[0]), parsedMarketCap[1],
+                        volume, parseFloat(parsedChange[0]), parsedChange[1], parsed52WeekRange[0],
+                        parsed52WeekRange[1], parseFloat(stockPriceAtClose), parseFloat(stockPriceAfterHours),
+                        parseFloat(parsedPercentOfFloat[0]), parsedPercentOfFloat[1])
+    
+                    await browser.close()
                 }
                 catch (ex) {
-                    parsedPublicFloat = [0, 0]
+                    console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
+                    console.log(ex)
+                    await browser.close()
                 }
-
-                let marketCap
-                let parsedMarketCap
-                try {
-                    marketCap = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _2)
-                    parsedMarketCap = parsePublicFloat(marketCap)
-                }
-                catch (ex) {
-                    parsedMarketCap = [0, 0]
-                }
-
-                let volume
-                try {
-                    volume = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _3)
-                    volume = parseFloat(volume.replace(/\D/g,''))
-                }
-                catch (ex) {
-                    volume = 0
-                }
-
-                let change
-                let parsedChange
-                try {
-                    change = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _4)
-                    parsedChange = parsePublicFloat(change)
-                }
-                catch (ex) {
-                    parsedChange = [0, 0]
-                }
-
-                let _52WeekRange
-                let parsed52WeekRange
-                try {
-                    _52WeekRange = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _5)
-                    parsed52WeekRange = parse52WeekRange(_52WeekRange)
-                }
-                catch (ex) {
-                    parsed52WeekRange = [0, 0]
-                }
-
-                let stockPriceAtClose
-                try {
-                    stockPriceAtClose = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _6)
-                }
-                catch (ex) {
-                    stockPriceAtClose = 0
-                }
-
-                let stockPriceAfterHours
-                try {
-                    stockPriceAfterHours = await page.evaluate(el => {
-                        return el.textContent;
-                    }, _7)
-                }
-                catch (ex) {
-                    stockPriceAfterHours = 0
-                }
-
-                await dbHelper.insertIntoWSJ(id, ticker, parseFloat(parsedPublicFloat[0]),
-                    parsedPublicFloat[1], parseFloat(parsedMarketCap[0]), parsedMarketCap[1],
-                    volume, parseFloat(parsedChange[0]), parsedChange[1], parsed52WeekRange[0],
-                    parsed52WeekRange[1], parseFloat(stockPriceAtClose), parseFloat(stockPriceAfterHours))
-
-                await browser.close()
             }
             catch (ex) {
                 console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
                 console.log(ex)
                 await browser.close()
             }
-        }
-        catch (ex) {
-            console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)
-            console.log(ex)
-            await browser.close()
-        }
-
+        }        
     }
     catch (ex) {
         console.log('ERROR IN = ' + `https://www.wsj.com/market-data/quotes/${ticker}`)

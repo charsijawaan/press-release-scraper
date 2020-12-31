@@ -123,15 +123,15 @@ module.exports = {
 
     insertIntoWSJ: (id, ticker, publicFloat, publicFloatUnitPart, marketCap,
                     marketCapUnitPart, volume, changeFromLast, changeFromLastUnitPart,
-                    _52WeekRangeStart, _52WeekRangeEnd, stockPriceAtClose, stockPriceAfterHours) => {
+                    _52WeekRangeStart, _52WeekRangeEnd, stockPriceAtClose, stockPriceAfterHours, percentOfFloat, percentOfFloatUnitPart) => {
         return new Promise((resolve, reject) => {
             let sqlQuery = `INSERT INTO wsj (id, ticker, public_float, public_float_unit_part, 
             market_cap, market_cap_unit_part, volume, change_from_last, change_from_last_unit_part,
-             start_52_week_range, end_52_week_range, stock_price_at_close, stock_price_after_hours) 
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+             start_52_week_range, end_52_week_range, stock_price_at_close, stock_price_after_hours, percent_of_float, percent_of_float_unit_part) 
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
             conn.query(sqlQuery, [id, ticker, publicFloat, publicFloatUnitPart, marketCap,
                 marketCapUnitPart, volume, changeFromLast, changeFromLastUnitPart,
-                _52WeekRangeStart, _52WeekRangeEnd, stockPriceAtClose, stockPriceAfterHours], (err, rows, fields) => {
+                _52WeekRangeStart, _52WeekRangeEnd, stockPriceAtClose, stockPriceAfterHours, percentOfFloat, percentOfFloatUnitPart], (err, rows, fields) => {
                 if (err)
                     reject(err)
                 else
@@ -281,8 +281,20 @@ module.exports = {
 
     checkLogin: (username, password) => {
         return new Promise((resolve, reject) => {
-            let sqlQuery = `SELECT * FROM login_details WHERE username = ? AND password = ?`
+            let sqlQuery = `SELECT * FROM login_details WHERE username = ? AND password = ? LIMIT 1`
             conn.query(sqlQuery, [username, password], (err, res, fields) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(res)
+            })
+        })
+    },
+
+    updateAdminPass: (password) => {
+        return new Promise((resolve, reject) => {
+            let sqlQuery = `UPDATE login_details SET password = ?`
+            conn.query(sqlQuery, [password], (err, res, fields) => {
                 if (err)
                     reject(err)
                 else

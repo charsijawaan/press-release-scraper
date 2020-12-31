@@ -14,6 +14,7 @@ let accessWire = require('./sites/accessWire')
 let globalNewsWire = require('./sites/globalNewsWire')
 let prNewsWire = require('./sites/prNewsWire')
 let helpers = require('./util/helpers')
+let nodemailer = require('nodemailer');
 
 // Templating engine settings
 hbs.registerPartials(__dirname + '/views/partials')
@@ -33,13 +34,11 @@ app.use(expressSession({
 }))
 
 async function fetchAll() {
-
   await businessWire.fetchBusinessWire()
   await accessWire.fetchAccessWire()
   await globalNewsWire.fetchGlobalNewsWire()
   await prNewsWire.fetchPrNewsWire()
   await removeErrors()
-
 }
 
 async function removeErrors() {
@@ -112,6 +111,7 @@ app.get('/', async (req, res) => {
     let hitsOnly = await dbHelper.getHitsWithoutWSJ()
 
     res.render('index', {
+      baseURL: config.webAddress,
       data: wsjData,
       hitsOnly: hitsOnly
     })
@@ -140,11 +140,96 @@ app.post('/', async (req, res) => {
 })
 
 app.get('/login', async (req, res) => {
-  res.render('login', {})
+  res.render('login', {
+    baseURL: config.webAddress
+  })
+})
+
+app.get('/recover-password', (req, res) => {
+
+  let code = helpers.get6DigitCode()
+  req.session.code = code
+
+  // send 6-digit verification code to Ale's email id
+  var transporter = nodemailer.createTransport({
+    host: "mail.letsoft.org",
+    port: 290,
+    secure: true, // upgrade later with STARTTLS
+    auth: {
+      user: "adeel-ahmed@letsoft.org",
+      pass: "Flash9360"
+    }
+  });
+  
+  var mailOptions = {
+    from: 'adeel-ahmed@letsoft.org',
+    to: 'arrepa321@gmail.com',
+    subject: 'Password Recovery - 6 Digit Verification Code',
+    text: 'Your 6-digit verification code is: ' + code
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } 
+    else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+
+  res.render('password-recovery', {
+    baseURL: config.webAddress,
+    status: ''
+  })
+})
+
+app.post('/recover-password', (req, res) => {
+  let code = req.body.code
+
+  if (code == req.session.code) {
+    req.session.codeVerified = true
+    res.redirect(config.webAddress + 'recover-password/new-password')
+  }
+  else {
+    res.render('password-recovery', {
+      baseURL: config.webAddress,
+      status: 'invalidCode'
+    })
+  }
+})
+
+app.get('/recover-password/new-password', (req, res) => {
+  if (req.session.codeVerified === true) {
+    res.render('new-password', {
+      baseURL: config.webAddress
+    })
+  }
+  else {
+    res.send('Oops! something went wrong :/')
+  }
+})
+
+app.post('/recover-password/new-password', async (req, res) => {
+  if (req.session.codeVerified === true) {
+    let newPass = req.body.newPassword
+    await dbHelper.updateAdminPass(newPass)
+
+    req.session.destroy()
+
+    res.redirect(config.webAddress)
+  }
+  else {
+    res.send('Oops! something went wrong :/')
+  }
 })
 
 app.get('/stay_awake',(req,res) => {
   return res.send('Hello');
+})
+
+app.get('/logout', (req, res) => {
+  req.session.destroy()
+  res.redirect(config.webAddress + 'login')
 })
 
 const port = process.env.PORT || 3000
@@ -153,5 +238,4 @@ app.listen(port, async () => {
   console.log('Crawler Started...')
   fetchAll()
   setInterval(fetchAll, 700000)
-
 })

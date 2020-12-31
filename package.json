@@ -19,6 +19,7 @@
     "memorystore": "^1.6.4",
     "mysql": "^2.18.1",
     "node-cron": "^2.0.3",
+    "nodemailer": "^6.4.17",
     "puppeteer": "^5.5.0"
   }
 }
