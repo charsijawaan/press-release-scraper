@@ -143,7 +143,7 @@ module.exports = {
     getDataWSJ: () => {
         return new Promise((resolve, reject) => {
             let sqlQuery = `SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name 
-            FROM wsj INNER JOIN hits ON wsj.id = hits.id ORDER BY hits.date DESC`
+            FROM wsj INNER JOIN hits ON wsj.id = hits.id ORDER BY hits.date DESC LIMIT 5000`
             conn.query(sqlQuery, [], (err, res, fields) => {
                 if (err)
                     reject(err)
@@ -218,7 +218,7 @@ module.exports = {
             }
 
             let sqlQuery = `SELECT wsj.*, hits.date, hits.url, hits.heading, hits.market_name 
-            FROM wsj INNER JOIN hits ON wsj.id = hits.id ${filterQuery} ORDER BY hits.date DESC`
+            FROM wsj INNER JOIN hits ON wsj.id = hits.id ${filterQuery} ORDER BY hits.date DESC LIMIT 5000`
             console.log(sqlQuery)
             conn.query(sqlQuery, [], (err, res, fields) => {
                 if (err)
@@ -231,7 +231,7 @@ module.exports = {
 
     getHitsWithoutWSJ: () => {
         return new Promise((resolve, reject) => {
-            let sqlQuery = 'SELECT * FROM hits WHERE NOT EXISTS (SELECT * FROM wsj WHERE wsj.id = hits.id) ORDER BY hits.date DESC'
+            let sqlQuery = 'SELECT * FROM hits WHERE NOT EXISTS (SELECT * FROM wsj WHERE wsj.id = hits.id) ORDER BY hits.date DESC LIMIT 5000'
             conn.query(sqlQuery, [], (err, res, fileds) => {
                 if (err)
                     reject(err)
